@@ -1,0 +1,7 @@
+{
+  "name": "controlUbicaciones",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
