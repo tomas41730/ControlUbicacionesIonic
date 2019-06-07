@@ -23,6 +23,9 @@ export class HomePage {
   map: any;
   markers = [];
 
+  isTracking = false;
+  watch = null;
+
   constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {
     this.anonLogin();
   }
@@ -44,9 +47,9 @@ export class HomePage {
   }
 
   anonLogin(){
-    this.afAuth.auth.signInAnonymously().then(user => {
-      console.log(user);
-      this.user = user;
+    this.afAuth.auth.signInAnonymously().then(res => {
+      this.user = res.user;
+      console.log(this.user);
 
       this.locationCollection = this.afs.collection(
         `locations/$(this.user.uid}/track`,
@@ -57,5 +60,42 @@ export class HomePage {
 
       //Actualizando mapa
     })
+  }
+  
+  startTracking(){
+    this.isTracking = true;
+    this.watch = Geolocation.watchPosition({}, (position, err) =>{
+      console.log('new position: ', position)
+      if(position) {
+        this.addNewLocation(
+          position.coords.latitude,
+          position.coords.longitude,
+          position.timestamp
+        );
+      }
+    })
+  }
+
+  stopTracking(){
+    Geolocation.clearWatch({ id: this.watch}).then(() => {
+      this.isTracking = false;
+    })
+  }
+
+  addNewLocation(lat, lng, timestamp){
+    this.locationCollection.add({
+      lat,
+      lng,
+      timestamp
+    });
+
+    let position = new google.maps.latLng(lat, lng);
+    this.map.setCenter(position);
+    this.map.setZoom(5);
+  }
+
+  deleteLocation(pos){
+    console.log('delete: ', pos)
+   // this.locationCollection.doc(pos.id).delete();
   }
 }
