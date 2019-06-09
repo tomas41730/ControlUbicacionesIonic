@@ -16,7 +16,7 @@ declare var google;
 })
 export class HomePage {
   locations: Observable<any>;
-  locationCollection: AngularFirestoreCollection<any>
+  locationsCollection: AngularFirestoreCollection<any>
   user = null;
 
   @ViewChild('map') mapElement: ElementRef;
@@ -51,13 +51,13 @@ export class HomePage {
       this.user = res.user;
       console.log(this.user);
 
-      this.locationCollection = this.afs.collection(
+      this.locationsCollection = this.afs.collection(
         `locations/`+this.user.uid+`/track`,
         ref => ref.orderBy('timestamp')
       );
 
       //Cargando datos de firebase
-
+        this.locations = this.locationsCollection.valueChanges();
       //Actualizando mapa
     });
   }
@@ -83,7 +83,7 @@ export class HomePage {
   }
 
   addNewLocation(lat, lng, timestamp){
-    this.locationCollection.add({
+    this.locationsCollection.add({
       lat,
       lng,
       timestamp
@@ -96,6 +96,6 @@ export class HomePage {
 
   deleteLocation(pos){
     console.log('delete: ', pos)
-   // this.locationCollection.doc(pos.id).delete();
+   // this.locationsCollection.doc(pos.id).delete();
   }
 }
