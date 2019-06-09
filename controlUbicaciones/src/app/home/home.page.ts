@@ -5,10 +5,12 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireModule } from '@angular/fire';
+
 const { Geolocation } = Plugins;
 
 declare var google;
-
+import { map } from 'rxjs/operators';
+import { animationFrame } from 'rxjs/internal/scheduler/animationFrame';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -35,7 +37,7 @@ export class HomePage {
   }
 
   loadMap(){
-    let latLng = new google.maps.LatLng(-17.3965312, -66.1594112);
+    let latLng = new google.maps.LatLng(-17.380494, -66.179610);
 
     let mapOptions = {
       center: latLng,
@@ -57,23 +59,53 @@ export class HomePage {
       );
 
       //Cargando datos de firebase
-        this.locations = this.locationsCollection.valueChanges();
+        this.locations = this.locationsCollection.snapshotChanges().pipe(
+          map(actions => 
+            actions.map(a => {
+              const data = a.payload.doc.data();
+              const id =  a.payload.doc.id;
+              return { id, ...data };
+            })
+          )
+        );
+        
       //Actualizando mapa
+      this.locations.subscribe(locations =>
+        {
+         console.log('new locations: ', locations);
+         this.updateMap(locations); 
+        })
     });
+  }
+
+  updateMap(locations){
+    this.markers.map(marker => marker.setMap(null));
+    this.markers = [];
+
+    for (let loc of locations){
+      let latLng = new google.maps.LatLng(loc.lat, loc.lng);
+
+      let marker = new google.maps.Marker({
+        position: latLng,
+        animation: google.maps.Animation.Drop,
+        map: this.map
+      });
+      this.markers.push(marker);
+    }
   }
   
   startTracking(){
-    this.isTracking = true;
-    this.watch = Geolocation.watchPosition({}, (position, err) =>{
-      console.log('new position: ', position);
-      if(position) {
-        this.addNewLocation(
-          position.coords.latitude,
-          position.coords.longitude,
-          position.timestamp
-        );
-      }
-    });
+    // this.isTracking = true;
+    // this.watch = Geolocation.watchPosition({}, (position, err) =>{
+    //   console.log('new position: ', position);
+    //   if(position) {
+    //     this.addNewLocation(
+    //       position.coords.latitude,
+    //       position.coords.longitude,
+    //       position.timestamp
+    //     );
+    //   }
+    // });
   }
 
   stopTracking(){
@@ -95,7 +127,7 @@ export class HomePage {
   }
 
   deleteLocation(pos){
-    console.log('delete: ', pos)
-   // this.locationsCollection.doc(pos.id).delete();
+    //console.log('delete: ', pos)
+   this.locationsCollection.doc(pos.id).delete();
   }
 }
