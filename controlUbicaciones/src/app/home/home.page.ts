@@ -35,11 +35,11 @@ export class HomePage {
   }
 
   loadMap(){
-    let latLng = new google.maps.LatLng(51.9036442, 7.6673267);
+    let latLng = new google.maps.LatLng(-17.3965312, -66.1594112);
 
     let mapOptions = {
       center: latLng,
-      zoom: 5,
+      zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
@@ -52,20 +52,20 @@ export class HomePage {
       console.log(this.user);
 
       this.locationCollection = this.afs.collection(
-        `locations/$(this.user.uid}/track`,
+        `locations/`+this.user.uid+`/track`,
         ref => ref.orderBy('timestamp')
       );
 
       //Cargando datos de firebase
 
       //Actualizando mapa
-    })
+    });
   }
   
   startTracking(){
     this.isTracking = true;
     this.watch = Geolocation.watchPosition({}, (position, err) =>{
-      console.log('new position: ', position)
+      console.log('new position: ', position);
       if(position) {
         this.addNewLocation(
           position.coords.latitude,
@@ -73,7 +73,7 @@ export class HomePage {
           position.timestamp
         );
       }
-    })
+    });
   }
 
   stopTracking(){
@@ -89,9 +89,9 @@ export class HomePage {
       timestamp
     });
 
-    let position = new google.maps.latLng(lat, lng);
+    let position = new google.maps.LatLng(lat, lng);
     this.map.setCenter(position);
-    this.map.setZoom(5);
+    this.map.setZoom(15);
   }
 
   deleteLocation(pos){
