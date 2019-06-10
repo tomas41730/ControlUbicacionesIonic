@@ -1,23 +1,17 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-
-//import { Plugins, GeolocationPluginWeb } from '@capacitor/core';
-//import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
-//import { AngularFireModule } from '@angular/fire';
-//import { Router } from '@angular/router';
-
-//const { Geolocation } = Plugins;
 
 declare var google;
 import { map } from 'rxjs/operators';
-//import { animationFrame } from 'rxjs/internal/scheduler/animationFrame';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+  estaDisponible = false;
   ubicaciones: Observable<any>;
   listaUbicaciones: AngularFirestoreCollection<any>;
   @ViewChild('map') mapElement: ElementRef;
@@ -30,7 +24,7 @@ export class HomePage {
     this.loadMap();
   }
   loadMap(){
-    let latLng = new google.maps.LatLng(-17.380494, -66.179610);
+    let latLng = new google.maps.LatLng(-17.391457 , -66.2126167);
 
     let mapOptions = {
       center: latLng,
@@ -59,7 +53,7 @@ export class HomePage {
       //Actualizando mapa
       this.ubicaciones.subscribe(ubicaciones =>
         {
-         console.log('new ubicaciones: ', ubicaciones);
+         console.log('ubicaciones de los conductores: ', ubicaciones);
          this.updateMap(ubicaciones); 
         })
   }
@@ -69,6 +63,7 @@ export class HomePage {
 
     for (let loc of ubicaciones){
       if(loc.disponible){
+        this.estaDisponible = true;
          let latLng = new google.maps.LatLng(loc.latitud, loc.longitud);   
       let marker = new google.maps.Marker({
         position: latLng,
@@ -81,6 +76,7 @@ export class HomePage {
       this.markers.push(marker);
       }
      else{
+      this.estaDisponible = false;
       let latLng = new google.maps.LatLng(loc.latitud, loc.longitud);   
       let marker = new google.maps.Marker({
         position: latLng,

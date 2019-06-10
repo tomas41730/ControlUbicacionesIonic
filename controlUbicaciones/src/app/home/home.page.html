@@ -10,18 +10,27 @@
   <div #map id="map"></div>
    
       <ion-list #lista id='lista'>
-        <ion-item-sliding *ngFor="let pos of ubicaciones | async">
-         <ion-item>
+        
+         <ion-item *ngFor="let pos of ubicaciones | async ">
            
-           <ion-label text-wrap> 
-             <h1>Disponible: {{ pos.disponible }}</h1>
+           <ion-label color="success" text-wrap *ngIf="pos.disponible"> 
+             <h1> {{ pos.nombreMotoTaxi }}
+                  {{ pos.apellidoMotoTaxi }}</h1>
               Lat: {{ pos.latitud }}
               Lng: {{ pos.longitud }}
              <p>
-               Conductor: {{ pos.nombreMotoTaxi }}
-                          {{ pos.apellidoMotoTaxi }}
+               Disponible: {{ pos.disponible }}
              </p>  
            </ion-label>
+           <ion-label color="danger" text-wrap *ngIf="!pos.disponible"> 
+            <h1> {{ pos.nombreMotoTaxi }}
+              {{ pos.apellidoMotoTaxi }}</h1>
+            Lat: {{ pos.latitud }}
+            Lng: {{ pos.longitud }}
+             <p>
+              Disponible: {{ pos.disponible }}
+            </p>   
+          </ion-label>
          </ion-item>
    
          <ion-item-options side="start">
@@ -30,6 +39,6 @@
            </ion-item-option>
          </ion-item-options>
    
-        </ion-item-sliding>
+      
       </ion-list>
 </ion-content>
