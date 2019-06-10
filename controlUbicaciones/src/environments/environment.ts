@@ -5,13 +5,13 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "AIzaSyCvqB7j4zaM3XJkrkbCN2AepORYvaf8g0o",
-    authDomain: "chachas-797d6.firebaseapp.com",
-    databaseURL: "https://chachas-797d6.firebaseio.com",
-    projectId: "chachas-797d6",
-    storageBucket: "chachas-797d6.appspot.com",
-    messagingSenderId: "782506399925",
-    appId: "1:782506399925:web:26dc714778464346"
+    apiKey: "AIzaSyAwPVADwAe4kocvRPw5JIMZV_qGoaIeM00",
+    authDomain: "chachasmotos.firebaseapp.com",
+    databaseURL: "https://chachasmotos.firebaseio.com",
+    projectId: "chachasmotos",
+    storageBucket: "chachasmotos.appspot.com",
+    messagingSenderId: "605621181338",
+    appId: "1:605621181338:web:e5851b96745d3d70"
   }
 };
 
