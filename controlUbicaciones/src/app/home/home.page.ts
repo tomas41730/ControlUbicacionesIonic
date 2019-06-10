@@ -5,6 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireModule } from '@angular/fire';
+import { Router } from '@angular/router';
 
 const { Geolocation } = Plugins;
 
@@ -28,7 +29,7 @@ export class HomePage {
   isTracking = false;
   watch = null;
 
-  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {
+  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore, public router : Router) {
     this.anonLogin();
   }
 
@@ -95,17 +96,17 @@ export class HomePage {
   }
   
   startTracking(){
-    // this.isTracking = true;
-    // this.watch = Geolocation.watchPosition({}, (position, err) =>{
-    //   console.log('new position: ', position);
-    //   if(position) {
-    //     this.addNewLocation(
-    //       position.coords.latitude,
-    //       position.coords.longitude,
-    //       position.timestamp
-    //     );
-    //   }
-    // });
+    this.isTracking = true;
+    this.watch = Geolocation.watchPosition({}, (position, err) =>{
+      console.log('new position: ', position);
+      if(position) {
+        this.addNewLocation(
+          position.coords.latitude,
+          position.coords.longitude,
+          position.timestamp
+        );
+      }
+    });
   }
 
   stopTracking(){
@@ -129,5 +130,9 @@ export class HomePage {
   deleteLocation(pos){
     //console.log('delete: ', pos)
    this.locationsCollection.doc(pos.id).delete();
+  }
+
+  mapHome(){
+    this.router.navigate(['/ubicaciones'])
   }
 }
