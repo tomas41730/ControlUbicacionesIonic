@@ -24,7 +24,7 @@
       Stop Tracking
    </ion-button>
 
-   <ion-list>
+   <ion-list #lista id='lista'>
      <ion-item-sliding *ngFor="let pos of locations | async">
       <ion-item>
         <ion-label text-wrap>
