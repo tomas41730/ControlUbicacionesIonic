@@ -7,8 +7,12 @@
   </ion-header>  
 
 <ion-content>
-  <div #map id="map"></div>
-   
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <div #map id="map"></div>
+      </ion-col>
+      <ion-col>
       <ion-list #lista id='lista'>
         
          <ion-item *ngFor="let pos of ubicaciones | async ">
@@ -41,4 +45,7 @@
    
       
       </ion-list>
+    </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
