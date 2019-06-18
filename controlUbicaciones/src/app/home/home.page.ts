@@ -19,7 +19,7 @@ export class HomePage {
   markers = [];
   constructor(private afs: AngularFirestore) { 
     this.anonLogin();
-    
+   
   }
   ionViewWillEnter(){
     this.loadMap();
@@ -62,6 +62,17 @@ export class HomePage {
   updateMap(ubicaciones){
     this.markers.map(marker => marker.setMap(null));
     this.markers = [];
+
+    let latLng = new google.maps.LatLng(-17.3921318,-66.2234896);         
+    let marker = new google.maps.Marker({
+    position: latLng,
+    animation: google.maps.Animation.Drop,
+    icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" },
+    label: {text: "pedido", color: "white"},
+    title: 'SUCURSAL',
+    map: this.map
+  });
+  this.markers.push(marker);
     for (let loc of ubicaciones){
       
       if(loc.disponible){
