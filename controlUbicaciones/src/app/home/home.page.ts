@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AngularFirestoreCollection, AngularFirestore } from '@angular/fire/firestore';
+import { Router } from '@angular/router'
 
 declare var google;
 import { map } from 'rxjs/operators';
@@ -12,12 +13,13 @@ import { map } from 'rxjs/operators';
 })
 export class HomePage {
   estaDisponible = false;
+  estaEnPedido = false;
   ubicaciones: Observable<any>;
   listaUbicaciones: AngularFirestoreCollection<any>;
   @ViewChild('map') mapElement: ElementRef;
   map: any;
   markers = [];
-  constructor(private afs: AngularFirestore) { 
+  constructor(private afs: AngularFirestore, public router : Router) { 
     this.anonLogin();
    
   }
@@ -63,20 +65,11 @@ export class HomePage {
     this.markers.map(marker => marker.setMap(null));
     this.markers = [];
 
-    let latLng = new google.maps.LatLng(-17.3921318,-66.2234896);         
-    let marker = new google.maps.Marker({
-    position: latLng,
-    animation: google.maps.Animation.Drop,
-    icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" },
-    label: {text: "pedido", color: "white"},
-    title: 'SUCURSAL',
-    map: this.map
-  });
-  this.markers.push(marker);
+   
     for (let loc of ubicaciones){
       
-      if(loc.disponible){
-        this.estaDisponible = true;
+      if(loc.disponible === true && loc.enPedido === false){
+       // this.estaDisponible = true;
         let latLng = new google.maps.LatLng(loc.latitud, loc.longitud);         
         let marker = new google.maps.Marker({
         position: latLng,
@@ -88,8 +81,22 @@ export class HomePage {
       });
       this.markers.push(marker);
       }
+      else if(loc.disponible === true && loc.enPedido === true){
+        //this.estaDisponible = true;
+       // this.estaEnPedido = true;
+        let latLng = new google.maps.LatLng(loc.latitud, loc.longitud);         
+        let marker = new google.maps.Marker({
+        position: latLng,
+        animation: google.maps.Animation.Drop,
+        icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" },
+        label: {text: loc.nombreMotoTaxi+" "+ loc.apellidoMotoTaxi, color: "white"},
+        title: loc.nombreMotoTaxi,
+        map: this.map
+      });
+      this.markers.push(marker);
+      }
      else{
-      this.estaDisponible = false;
+      //this.estaDisponible = false;
       let latLng = new google.maps.LatLng(loc.latitud, loc.longitud);   
       let marker = new google.maps.Marker({
         position: latLng,
@@ -175,4 +182,7 @@ export class HomePage {
     console.log('La menor distancia es '+ min+' de '+ moto);     
     return moto;
   } 
+  IrAHelp(){
+    this.router.navigate(['/help']);
+  }
 }
