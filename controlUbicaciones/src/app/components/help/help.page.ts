@@ -7,8 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HelpPage implements OnInit {
 
-  constructor() { }
-
+  constructor() {}
   ngOnInit() {
   }
 
