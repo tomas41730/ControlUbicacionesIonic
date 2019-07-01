@@ -12,16 +12,15 @@ import { map } from 'rxjs/operators';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  estaDisponible = false;
-  estaEnPedido = false;
   ubicaciones: Observable<any>;
   listaUbicaciones: AngularFirestoreCollection<any>;
   @ViewChild('map') mapElement: ElementRef;
   map: any;
   markers = [];
   constructor(private afs: AngularFirestore, public router : Router) { 
-    this.anonLogin();
-   
+    
+    this.getMotos();
+  
   }
   ionViewWillEnter(){
     this.loadMap();
@@ -38,9 +37,11 @@ export class HomePage {
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
   }
 
-  anonLogin(){
+  getMotos(){
     
-      this.listaUbicaciones = this.afs.collection('motoTaxis');
+      this.listaUbicaciones = this.afs.collection("motoTaxis", ref => 
+      ref.orderBy('disponible', 'desc').orderBy('enPedido', 'desc')
+      );
 
       //Cargando datos de firebase
         this.ubicaciones = this.listaUbicaciones.snapshotChanges().pipe(
@@ -170,7 +171,7 @@ export class HomePage {
     for (let loc of ubicaciones){
       
       if(loc.latitud != null){
-        this.estaDisponible = true;
+       
         let latLng = new google.maps.LatLng(loc.latitud, loc.longitud); 
         let total = google.maps.geometry.spherical.computeDistanceBetween(latLng, sucursal);
         if( total === min){
